@@ -3,7 +3,6 @@
 import singlePage
 import countryPage
 import getProvince
-import winsound
 import downloadImg
 import saveTxt
 import userAgent
@@ -13,6 +12,8 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import datetime
 import random
+import global_var
+import conf
 
 
 # 设置header
@@ -86,7 +87,8 @@ def getSinglePageContent(url, ip, jump_url, headers):
 	# print(v['qq'])
 	# print(v['wx'])
 	# print(v['image_urls'])
-	filePath = './image/' + singleData['title'] + '/'
+	fileDir = global_var.get_value('image.dir')
+	filePath = fileDir + singleData['title'] + '/'
 
 	for img in singleData['image_urls']:
 		downImg.downloadImg(img, filePath, headers, ip)
@@ -97,18 +99,23 @@ def getSinglePageContent(url, ip, jump_url, headers):
 
 # 获得IP列表
 def getIPContent():
-	filePath = './IP/'
+	configC = conf.Config()
+	fileDir = global_var.get_value('ip_config.dir')
+	filePath = fileDir
 	if not os.path.exists(filePath):
 		os.makedirs(filePath, mode=0o755, exist_ok=True)
-	fileName = 'ip.txt'
+	fileName = global_var.get_value('ip_config.name')
 	need_ip = False
 	try:
 		if os.path.exists(filePath + '/' + fileName):
 			file_object = open(filePath + '/' + fileName, 'r', encoding='utf-8')
-			first_line = file_object.readline().rstrip('\n')
-			if first_line:
+			last_time = ''
+			flag = global_var.value_exist()('ip_config.last_time')
+			if flag:
+				last_time = global_var.get_value('ip_config.last_time')
+			if last_time:
 				# 7天更新一次
-				get_ip_time = time.mktime(time.strptime(first_line, '%Y-%m-%d %H:%M:%S'))
+				get_ip_time = time.mktime(time.strptime(last_time, '%Y-%m-%d %H:%M:%S'))
 				threeSevenAgo = datetime.datetime.now() - datetime.timedelta(days=7)
 				timeStamp = int(time.mktime(threeSevenAgo.timetuple()))
 				if get_ip_time < timeStamp:
@@ -132,9 +139,9 @@ def getIPContent():
 							ips.append(i)
 
 			get_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+			configC.updateConfig('last_time',get_time)
 			fw = open(filePath + '/' + fileName, 'w', encoding='utf-8')
-			fw.write(get_time)
-			fw.write('\n')
+		
 			for i in ips:
 				fw.write(i)
 				fw.write('\n')
@@ -148,8 +155,8 @@ def getIPContent():
 
 # 获得随机IP
 def getRandIP():
-	filePath = './IP/'
-	fileName = 'ip.txt'
+	filePath = global_var.get_value('ip_config.dir')
+	fileName = global_var.get_value('ip_config.name')
 	ips = []
 	ip = ''
 
@@ -172,26 +179,29 @@ def getRandIP():
 
 
 if __name__ == '__main__':
-	url = "https://www.xhg2009.com/forum.php"
+	configC = conf.Config()
+	configC.configInit()
 
-	agent = userAgent.UserAgent()
-	user_agent = agent.getUserAgent()
-	# print(user_agent)
+	url = global_var.get_value('xunhuan.url')
 
-	getIPContent()
-	ip = getRandIP()
-	# print(ip)
+	# agent = userAgent.UserAgent()
+	# user_agent = agent.getUserAgent()
+	# # print(user_agent)
 
-	headers = getHeaders(url, user_agent)
-	# 设置线程池
-	thread_pool = ThreadPoolExecutor(max_workers=5)
+	# getIPContent()
+	# ip = getRandIP()
+	# # print(ip)
 
-	for i in range(1, 4):
-		pageArray = getForumPageContent(url, ip, i, headers, 1)
-		print(len(pageArray))
-		print(pageArray)
-		getAllSinglePageContent(url, pageArray, ip, thread_pool, headers)
+	# headers = getHeaders(url, user_agent)
+	# # 设置线程池
+	# thread_pool = ThreadPoolExecutor(max_workers=5)
 
-	thread_pool.shutdown(wait=True)
+	# for i in range(1, 4):
+	# 	pageArray = getForumPageContent(url, ip, i, headers, 1)
+	# 	print(len(pageArray))
+	# 	print(pageArray)
+	# 	getAllSinglePageContent(url, pageArray, ip, thread_pool, headers)
+
+	# thread_pool.shutdown(wait=True)
 
 # getSinglePageContent(url, ip, 'forum.php?mod=viewthread&tid=124294&extra=page%3D3%26filter%3Dsortid%26sortid%3D3',headers)

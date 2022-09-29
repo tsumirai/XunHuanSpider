@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import gzip
 import time
 import datetime
+import global_var
 
 
 class GetIP:
@@ -14,7 +15,7 @@ class GetIP:
 			"Referer": "https://free.kuaidaili.com/free/inha/2/",
 			"User-Agent": userAgent,
 		}
-		url = 'https://www.kuaidaili.com/free/inha/' + str(pageNo)
+		url = global_var.get_value('ip_config.url') + str(pageNo)
 
 		try:
 			request = urllib.request.Request(url, headers=headers)

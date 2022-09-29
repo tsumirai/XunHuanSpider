@@ -1,0 +1,11 @@
+title = "TOML in XunHuan"
+
+[xunhuan]
+    url = "https://www.xhg2009.com/forum.php"
+[ip_config]
+    dir = "./IP/"
+    name = "ip.txt"
+    url = "https://www.kuaidaili.com/free/inha/"
+[image]
+    dir = "./image/"
+
