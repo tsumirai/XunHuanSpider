@@ -3,12 +3,11 @@
 import urllib.request
 from urllib import parse
 from bs4 import BeautifulSoup
-import province
-import content
+from src import content
 import re
 
 
-class CountryPage:
+class ForumPage:
 	def __init__(self, url, header, ip, page, area):
 		self.url = url
 		self.page = page
@@ -16,7 +15,7 @@ class CountryPage:
 		self.ip = ip
 		self.area = area
 
-	def getCountryPage(self):
+	def _getForumPage(self):
 		values = {"mod": "forumdisplay", "fid": "2", "filter": "sortid", "sortid": "3", "searchsort": "1",
 				  "area": self.area, "page": self.page}
 
@@ -57,7 +56,7 @@ class CountryPage:
 					tid = 0
 					if m:
 						tid = m.group(1)
-						# print(tid)
+					# print(tid)
 
 					jump_url = tmp_jump_url.replace('amp;', '')
 					# print(jump_url)
@@ -76,3 +75,14 @@ class CountryPage:
 			print(result.__traceback__.tb_frame.f_globals['__file__'])
 			print(result.__traceback__.tb_lineno)
 			print(repr(result))
+
+	# 根据页数获得帖子列表
+	def getForumPageList(self):
+		# refer = "https://www.xhg2009.com/forum.php?mod=forumdisplay&fid=2&filter=sortid&sortid=3&searchsort=1&area=1"
+
+		# province = getProvince.GetProvince(url=url, user_agent=user_agent, refer=refer, cookie=cookie, accept=accept,
+		# 								   accept_language=accept_language, page='1')
+		# province.GetProvinceDict()
+
+		pageArray = self._getForumPage()
+		return pageArray

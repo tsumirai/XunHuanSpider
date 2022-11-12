@@ -1,12 +1,9 @@
 # coding=utf-8
-
-import urllib.request
-from urllib import parse
 from bs4 import BeautifulSoup
-import content
-from http import cookiejar
+from src import content
 import requests
-import re
+from src.config import global_config
+from src.content import downloadImg, saveTxt, content
 
 
 class SinglePage():
@@ -20,7 +17,7 @@ class SinglePage():
 		self.header['refer'] = header['refer'] + \
 							   '&filter=sortid&sortid=3&searchsort=1&area=1'
 
-	def getSinglePageContent(self):
+	def _getSinglePageContent(self):
 		url = self.url + '?' + self.jump_url.replace('forum.php?', '')
 		# r = re.compile('tid=(.*?)&')
 		# m = r.search(self.jump_url)
@@ -175,3 +172,26 @@ class SinglePage():
 			print(result.__traceback__.tb_frame.f_globals['__file__'])
 			print(result.__traceback__.tb_lineno)
 			print(repr(result))
+
+	# 获得具体帖子内容
+	def _getSinglePage(self):
+		# refer = "https://www.xhg2009.com/forum.php?mod=forumdisplay&fid=2&filter=sortid&sortid=3&searchsort=1&area=1"
+
+		singleData = self._getSinglePageContent()
+
+		# 下载图片
+		downImg = downloadImg.DownloadImg()
+
+		# print(v['title'])
+		# print(v['content'])
+		# print(v['qq'])
+		# print(v['wx'])
+		# print(v['image_urls'])
+		fileDir = global_config.get_value('image.dir')
+		filePath = fileDir + singleData['title'] + '/'
+
+		for img in singleData['image_urls']:
+			downImg.downloadImg(img, filePath, self.header, self.ip)
+
+		txt = saveTxt.SaveTxt()
+		txt.saveTxt(singleData, filePath)

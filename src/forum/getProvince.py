@@ -3,7 +3,7 @@
 import urllib.request
 from urllib import parse
 from bs4 import BeautifulSoup
-import province
+from src.forum import province
 
 
 class GetProvince:
