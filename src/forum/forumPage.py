@@ -3,7 +3,7 @@
 import urllib.request
 from urllib import parse
 from bs4 import BeautifulSoup
-from src import content
+from src.content import content
 import re
 
 

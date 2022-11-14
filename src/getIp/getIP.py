@@ -98,7 +98,12 @@ class GetIP:
 	# 获得IP列表
 	def getIPContent(self):
 		fileDir = global_config.get_value('ip_config.dir')
+		# 获取绝对路径
+		abs_path = os.path.abspath(__file__)
+		# 获取目录路径
+		dir_name = os.path.dirname(abs_path)
 		filePath = fileDir
+		print(dir_name)
 		if not os.path.exists(filePath):
 			os.makedirs(filePath, mode=0o755, exist_ok=True)
 		fileName = global_config.get_value('ip_config.name')
