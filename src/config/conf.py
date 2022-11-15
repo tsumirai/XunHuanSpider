@@ -20,7 +20,7 @@ class Config:
 		# 获取目录路径
 		dir_name = os.path.dirname(abs_path)  # 2
 
-		path = dir_name + r'\config.ini'
+		path = dir_name + r'/config.ini'
 
 		if not os.path.exists(path):
 			raise FileNotFoundError("配置文件不存在")
