@@ -1,4 +1,8 @@
 # coding=utf-8
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 from src.config import conf
 from src.glb import global_redis
 from requests.cookies import cookiejar_from_dict
