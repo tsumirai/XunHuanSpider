@@ -5,6 +5,7 @@ from urllib import parse
 from bs4 import BeautifulSoup
 from src.content import content
 import re
+from src.glb import logger
 
 
 class ForumPage:
@@ -75,6 +76,9 @@ class ForumPage:
 			print(result.__traceback__.tb_frame.f_globals['__file__'])
 			print(result.__traceback__.tb_lineno)
 			print(repr(result))
+			logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
+            result.__traceback__.tb_lineno))
+        	logger.error(repr(result))
 
 	# 根据页数获得帖子列表
 	def getForumPageList(self):

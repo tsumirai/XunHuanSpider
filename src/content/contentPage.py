@@ -4,6 +4,7 @@ from src import content
 import requests
 from src.config import global_config
 from src.content import downloadImg, saveTxt, content
+from src.glb import logger
 
 
 class SinglePage():
@@ -172,6 +173,9 @@ class SinglePage():
 			print(result.__traceback__.tb_frame.f_globals['__file__'])
 			print(result.__traceback__.tb_lineno)
 			print(repr(result))
+			logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
+            result.__traceback__.tb_lineno))
+        	logger.error(repr(result))
 
 	# 获得具体帖子内容
 	def _getSinglePage(self):

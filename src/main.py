@@ -1,16 +1,16 @@
 # coding=utf-8
-import os
-import sys
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
 from src.config import conf
-from src.glb import global_redis
 from requests.cookies import cookiejar_from_dict
 from src.logIn import log_in
 from src.content import allContent
 from src.forum import forumPage
 from src.getIp import getIP
 from src.config import global_config, userAgent
+from src.glb import global_redis, logger
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 
 
 # 设置header
@@ -31,33 +31,43 @@ def getHeaders(url, user_agent, cookie):
 
 
 if __name__ == '__main__':
-    configC = conf.Config()
-    configC.configInit()
-    # global_redis._init()
+    try:
+        configC = conf.Config()
+        configC.configInit()
+        global_redis._init()
+        logger._init()
 
-    logIn = log_in.Login('zailid', 'hatsune3190')
-    cookie = logIn.get_cookie()
+        logIn = log_in.Login('zailid', 'hatsune3190')
+        cookie = logIn.get_cookie()
 
-    url = global_config.get_value('xunhuan.url')
+        url = global_config.get_value('xunhuan.url')
 
-    agent = userAgent.UserAgent()
-    user_agent = agent.getUserAgent()
-    # print(user_agent)
+        agent = userAgent.UserAgent()
+        user_agent = agent.getUserAgent()
+        # print(user_agent)
 
-    ipFunc = getIP.GetIP()
-    ipFunc.getIPContent()
-    ip = ipFunc.getRandIP()
-    print(ip)
+        ipFunc = getIP.GetIP()
+        ipFunc.getIPContent()
+        ip = ipFunc.getRandIP()
+        print(ip)
 
-    headers = getHeaders(url, user_agent, cookie)
-    sPage = allContent.AllContent(url, ip, headers)
-    print(sPage)
-    i = 1
-    # for i in range(1, 4):
-    fPage = forumPage.ForumPage(url, headers, ip, i, 1)
-    pageArray = fPage.getForumPageList()
-    print(len(pageArray))
-    print(pageArray)
-    sPage.getAllSinglePageContent(pageArray)
+        headers = getHeaders(url, user_agent, cookie)
+        sPage = allContent.AllContent(url, ip, headers)
+        print(sPage)
+        i = 1
+        # for i in range(1, 4):
+        fPage = forumPage.ForumPage(url, headers, ip, i, 1)
+        pageArray = fPage.getForumPageList()
+        print(len(pageArray))
+        print(pageArray)
+        sPage.getAllSinglePageContent(pageArray)
 
-    logIn.closeBrowser()
+    except Exception as result:
+        print(result.__traceback__.tb_frame.f_globals['__file__'])
+        print(result.__traceback__.tb_lineno)
+        print(repr(result))
+        logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
+            result.__traceback__.tb_lineno))
+        logger.error(repr(result))
+    finally:
+        logIn.closeBrowser()

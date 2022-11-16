@@ -7,6 +7,8 @@ import datetime
 from src.config import global_config, userAgent
 from src.glb import global_redis
 import random
+from src.consts import consts
+from src.glb import logger
 
 
 class GetIP:
@@ -87,23 +89,22 @@ class GetIP:
 			# print(i)
 			# print(i.attrs)
 
-			print(ipArray)
+			print(len(ipArray))
 			return ipArray
 
 		except Exception as result:
 			print(result.__traceback__.tb_frame.f_globals['__file__'])
 			print(result.__traceback__.tb_lineno)
 			print(repr(result))
+			logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
+            result.__traceback__.tb_lineno))
+        	logger.error(repr(result))
 
 	# 获得IP列表
 	def getIPContent(self):
 		fileDir = global_config.get_value('ip_config.dir')
-		# 获取绝对路径
-		abs_path = os.path.abspath(__file__)
-		# 获取目录路径
-		dir_name = os.path.dirname(abs_path)
 		filePath = fileDir
-		print(dir_name)
+
 		if not os.path.exists(filePath):
 			os.makedirs(filePath, mode=0o755, exist_ok=True)
 		fileName = global_config.get_value('ip_config.name')
@@ -113,7 +114,7 @@ class GetIP:
 				file_object = open(filePath + '/' + fileName,
 								   'r', encoding='utf-8')
 
-				last_time = global_redis.get('ip_last_time')
+				last_time = global_redis.get(consts.REDIS_KEY_IP_LAST_TIME)
 				if last_time:
 					# 7天更新一次
 					get_ip_time = time.mktime(
@@ -142,7 +143,7 @@ class GetIP:
 
 				get_time = time.strftime(
 					'%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-				global_redis.set('last_time', get_time)
+				global_redis.set(consts.REDIS_KEY_IP_LAST_TIME, get_time)
 				fw = open(filePath + '/' + fileName, 'w', encoding='utf-8')
 
 				for i in ips:

@@ -1,5 +1,6 @@
 import os
 import requests
+from src.glb import logger
 
 
 class DownloadImg:
@@ -29,6 +30,9 @@ class DownloadImg:
 			print(result.__traceback__.tb_frame.f_globals['__file__'])
 			print(result.__traceback__.tb_lineno)
 			print(repr(result))
+			logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
+            result.__traceback__.tb_lineno))
+        	logger.error(repr(result))
 
 # with open(filePath + imageName, 'wb')as f:
 # 	f.write(response.content)
