@@ -24,15 +24,18 @@ class DownloadImg:
                 with open(filePath + imageName, 'wb') as f:
                     f.write(r.content)
             else:
-                print("图片获取失败")
+                logger.error(img_url+"图片获取失败")
 
         except Exception as result:
-            print(result.__traceback__.tb_frame.f_globals['__file__'])
-            print(result.__traceback__.tb_lineno)
-            print(repr(result))
-            logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
-                result.__traceback__.tb_lineno))
-        logger.error(repr(result))
+            # print(result.__traceback__.tb_frame.f_globals['__file__'])
+            # print(result.__traceback__.tb_lineno)
+            # print(repr(result))
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+            # logger.error(repr(result))
+
+        finally:
+            f.close()
 
 # with open(filePath + imageName, 'wb')as f:
 # 	f.write(response.content)

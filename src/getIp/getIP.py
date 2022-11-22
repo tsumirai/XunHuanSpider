@@ -93,12 +93,12 @@ class GetIP:
             return ipArray
 
         except Exception as result:
-            print(result.__traceback__.tb_frame.f_globals['__file__'])
-            print(result.__traceback__.tb_lineno)
-            print(repr(result))
-            logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
-                result.__traceback__.tb_lineno))
-        logger.error(repr(result))
+            # print(result.__traceback__.tb_frame.f_globals['__file__'])
+            # print(result.__traceback__.tb_lineno)
+            # print(repr(result))
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+            # logger.error(repr(result))
 
     # 获得IP列表
     def getIPContent(self):
@@ -152,9 +152,12 @@ class GetIP:
                 fw.close()
 
         except Exception as result:
-            print(result.__traceback__.tb_frame.f_globals['__file__'])
-            print(result.__traceback__.tb_lineno)
-            print(repr(result))
+            # print(result.__traceback__.tb_frame.f_globals['__file__'])
+            # print(result.__traceback__.tb_lineno)
+            # print(repr(result))
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+            # logger.error(repr(result))
 
     # 获得随机IP
     def getRandIP(self):
@@ -176,6 +179,9 @@ class GetIP:
             return ip
 
         except Exception as result:
-            print(result.__traceback__.tb_frame.f_globals['__file__'])
-            print(result.__traceback__.tb_lineno)
-            print(repr(result))
+            # print(result.__traceback__.tb_frame.f_globals['__file__'])
+            # print(result.__traceback__.tb_lineno)
+            # print(repr(result))
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+            # logger.error(repr(result))

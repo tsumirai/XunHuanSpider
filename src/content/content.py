@@ -6,13 +6,12 @@ class Content:
         dict['tid'] = tid
         return dict
 
-    def Complete(self, title, content, imageUrls, qq, wx, url, tid):
+    def Complete(self, title, content, imageUrls, contact, url, tid):
         dict = {}
         dict['title'] = title
         dict['content'] = content
         dict['image_urls'] = imageUrls
-        dict['qq'] = qq
-        dict['wx'] = wx
+        dict['contact'] = contact
         dict['tid'] = tid
         dict['url'] = url
         return dict

@@ -5,22 +5,27 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-
-from src import mysql
-from src.mysql import global_mysql
-from src.config import conf
-from requests.cookies import cookiejar_from_dict
-from src.logIn import log_in
-from src.content import allContent
-from src.forum import forumPage
-from src.getIp import getIP
-from src.config import userAgent
-from src.my_redis import global_redis
-from src.logger import logger
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
 from src.model import xunhuan
+from src.logger import logger
+from src.my_redis import global_redis
+from src.config import userAgent
+from src.getIp import getIP
+from src.forum import forumPage
+from src.content import allContent
+from src.logIn import log_in
+from requests.cookies import cookiejar_from_dict
+from src.config import conf
+from src.mysql import global_mysql
+from src import mysql
+from src.content import uploadImg
+
 
 
 # 设置header
+
 def getHeaders(url, user_agent, cookie):
     temp_url = url.replace('https://', '')
     temp_url = temp_url.replace('/forum.php', '')
@@ -44,42 +49,44 @@ if __name__ == '__main__':
         logger._init()
         global_mysql._init()
 
-        add_content = xunhuan.Xunhuan(
-            12312, '测试', '测试用内容', 'http://ssafdafe', 901231293, 'ceshji')
-        session = global_mysql.get_session()
-        session.add(add_content)
-        session.commit()
+        # upImg = uploadImg.UploadImg()
+        # upImg.uploadImg("","","")
 
-        # logIn = log_in.Login('zailid', 'hatsune3190')
-        # cookie = logIn.get_cookie()
-        # url = conf.get('xunhuan', 'url')
+        # add_content = xunhuan.Xunhuan(
+        #     12312, '测试', '测试用内容', 'http://ssafdafe', 901231293, 'ceshji', "adafouea")
+        # global_mysql.add_data(add_content)
 
-        # agent = userAgent.UserAgent()
-        # user_agent = agent.getUserAgent()
-        # # print(user_agent)
+        logIn = log_in.Login('zailid', 'hatsune3190')
+        cookie = logIn.get_cookie()
 
-        # ipFunc = getIP.GetIP()
-        # ipFunc.getIPContent()
-        # ip = ipFunc.getRandIP()
+        url = conf.get('xunhuan', 'url')
+
+        agent = userAgent.UserAgent()
+        user_agent = agent.getUserAgent()
+        # print(user_agent)
+
+        ipFunc = getIP.GetIP()
+        ipFunc.getIPContent()
+        ip = ipFunc.getRandIP()
         # print(ip)
 
-        # headers = getHeaders(url, user_agent, cookie)
-        # sPage = allContent.AllContent(url, ip, headers)
+        headers = getHeaders(url, user_agent, cookie)
+        sPage = allContent.AllContent(url, ip, headers)
         # print(sPage)
-        # i = 1
-        # # for i in range(1, 4):
-        # fPage = forumPage.ForumPage(url, headers, ip, i, 1)
-        # pageArray = fPage.getForumPageList()
+        i = 1
+        # for i in range(1, 4):
+        fPage = forumPage.ForumPage(url, headers, ip, i, 1)
+        pageArray = fPage.getForumPageList()
         # print(len(pageArray))
         # print(pageArray)
-        # sPage.getAllSinglePageContent(pageArray)
+        sPage.getAllSinglePageContent(pageArray)
 
     except Exception as result:
-        print(result.__traceback__.tb_frame.f_globals['__file__'])
-        print(result.__traceback__.tb_lineno)
-        print(repr(result))
-        # logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+str(logger.error(
-        #     result.__traceback__.tb_lineno)))
+        # print(result.__traceback__.tb_frame.f_globals['__file__'])
+        # print(result.__traceback__.tb_lineno)
+        # print(repr(result))
+        logger.error(
+            result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
         # logger.error(repr(result))
-    # finally:
-    #     logIn.closeBrowser()
+    finally:
+        logIn.closeBrowser()

@@ -27,7 +27,7 @@ class ForumPage:
         opener = urllib.request.build_opener(proxy_support)
         urllib.request.install_opener(opener)
 
-        print(self.url + '?' + data)
+        # print(self.url + '?' + data)
 
         try:
             request = urllib.request.Request(
@@ -73,12 +73,12 @@ class ForumPage:
         # 	print(v)
 
         except Exception as result:
-            print(result.__traceback__.tb_frame.f_globals['__file__'])
-            print(result.__traceback__.tb_lineno)
-            print(repr(result))
-            logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
-                result.__traceback__.tb_lineno))
-        logger.error(repr(result))
+            # print(result.__traceback__.tb_frame.f_globals['__file__'])
+            # print(result.__traceback__.tb_lineno)
+            # print(repr(result))
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+            # logger.error(repr(result))
 
     # 根据页数获得帖子列表
     def getForumPageList(self):

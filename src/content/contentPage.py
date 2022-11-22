@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 from src import content
 import requests
 from src.config import conf
-from src.content import downloadImg, saveTxt, content
+from src.content import downloadImg, saveTxt, content, uploadImg
 from src.logger import logger
+import re
 
 
 class SinglePage():
@@ -56,7 +57,8 @@ class SinglePage():
             soup = BeautifulSoup(
                 response.text, 'html.parser', from_encoding='utf-8')
             title = soup.find_all('meta', attrs={"name": 'keywords'})
-            thread = soup.find_all('span')
+            # thread = soup.find_all('span')
+            miss_show = soup.find_all('div', class_='miss-show')
             contentText = soup.find_all('td', class_='t_f')
             pics = soup.find_all('div', class_='mbn savephotop')
             other_pics = soup.find_all('img', class_='zoom')
@@ -65,8 +67,9 @@ class SinglePage():
             # keyword = "name=\"keywords\""
             contentData = ''
             titleData = ''
-            qqData = ''
-            wxData = ''
+            # qqData = ''
+            # wxData = ''
+            contactData = ''
             imageData = []
             for i in title:
                 # print(i)
@@ -74,8 +77,19 @@ class SinglePage():
                 titleData = i.attrs['content'].replace('凤楼信息', '')
             # print(titleData)
 
+            for i in miss_show:
+                reg = re.compile(r'QQ/微信:(.*)切记！未见面不要先给钱，见面满意后付款!')
+                # print(i.text)
+                m = re.search(reg, i.text)
+                if m:
+                    contactData = m.group(1)
+                    # print(m.group(1))
+                else:
+                    contactData = i.text
+                    # print(i.text)
+
             # print(thread)
-            for i in thread:
+            # for i in thread:
                 # print(i.text)
                 if 'QQ：' in i.text:
                     qq = i.text.split(' ')
@@ -166,22 +180,27 @@ class SinglePage():
                 imageData.append(image_url)
 
             complete = contentDetail.Complete(
-                titleData, contentData, imageData, qqData, wxData, url, self.tid)
+                titleData, contentData, imageData, contactData, url, self.tid)
             return complete
 
         except Exception as result:
-            print(result.__traceback__.tb_frame.f_globals['__file__'])
-            print(result.__traceback__.tb_lineno)
-            print(repr(result))
-            logger.error(result.__traceback__.tb_frame.f_globals['__file__']+':'+logger.error(
-                result.__traceback__.tb_lineno))
-        logger.error(repr(result))
+            # print(result.__traceback__.tb_frame.f_globals['__file__'])
+            # print(result.__traceback__.tb_lineno)
+            # print(repr(result))
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+            # logger.error(repr(result))
 
     # 获得具体帖子内容
     def _getSinglePage(self):
         # refer = "https://www.xhg2009.com/forum.php?mod=forumdisplay&fid=2&filter=sortid&sortid=3&searchsort=1&area=1"
 
         singleData = self._getSinglePageContent()
+
+        # 上传图片
+        upImg = uploadImg.UploadImg()
+        for img in singleData['image_urls']:
+            upImg.uploadImg(img, self.header, self.ip, self.tid)
 
         # 下载图片
         downImg = downloadImg.DownloadImg()
@@ -194,8 +213,8 @@ class SinglePage():
         fileDir = conf.get('image', 'dir')
         filePath = fileDir + singleData['title'] + '/'
 
-        for img in singleData['image_urls']:
-            downImg.downloadImg(img, filePath, self.header, self.ip)
+        for down_img in singleData['image_urls']:
+            downImg.downloadImg(down_img, filePath, self.header, self.ip)
 
         txt = saveTxt.SaveTxt()
         txt.saveTxt(singleData, filePath)
