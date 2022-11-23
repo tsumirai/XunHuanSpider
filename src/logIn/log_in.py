@@ -15,24 +15,20 @@ class Login:
         self.browser.get(
             'https://www.xhg141.com/forum.php?mod=forumdisplay&fid=2&sortid=3&sortid=3&filter=sortid&searchsort=1&area=1&page=1')  # 打开设置的网址
 
-        # user_login_button = self.browser.find_element_by_class_name('qx_user_a')
         user_login_button = self.browser.find_element(
             by=By.CLASS_NAME, value='qx_user_a')
         user_login_button.click()
 
         # 输入用户名
-        # username = self.browser.find_element_by_name('username')
         username = self.browser.find_element(
             by=By.NAME, value='username')
         username.send_keys(self.username)
 
         # 输入密码
-        # password = self.browser.find_element_by_name('password')
         password = self.browser.find_element(by=By.NAME, value='password')
         password.send_keys(self.password)
 
         # 点击登录按钮
-        # login_button = self.browser.find_element_by_name('loginsubmit')
         login_button = self.browser.find_element(
             by=By.NAME, value='loginsubmit')
         login_button.submit()
@@ -43,20 +39,12 @@ class Login:
 
         cookie = self.browser.get_cookies()  # 获得cookie
 
-        # print(cookie)
-
-        # 打印网页源代码
-        # print(browser.page_source.encode('utf-8').decode())
-        # browser.quit()
         return cookie
 
     def get_cookie(self):
         cookie = self._log_in()
         cookieStr = [item['name'] + '=' + item['value'] for item in cookie]
         return '; '.join(item for item in cookieStr)
-
-    # for c in cookie:
-    # 	self.cookie[c['name']] = c['value']
 
     def closeBrowser(self):
         self.browser.quit()

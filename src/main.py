@@ -5,23 +5,23 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
-from src.model import xunhuan
-from src.logger import logger
-from src.my_redis import global_redis
-from src.config import userAgent
-from src.getIp import getIP
-from src.forum import forumPage
-from src.content import allContent
-from src.logIn import log_in
-from requests.cookies import cookiejar_from_dict
-from src.config import conf
-from src.mysql import global_mysql
-from src import mysql
-from src.content import uploadImg
 
+from src.content import content
+from src import mysql
+from src.mysql import global_mysql
+from src.config import conf
+from requests.cookies import cookiejar_from_dict
+from src.logIn import log_in
+from src.content import allContent
+from src.forum import forumPage
+from src.getIp import getIP
+from src.config import userAgent
+from src.my_redis import global_redis
+from src.logger import logger
+from src.model import xunhuan
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
+from sqlalchemy import create_engine
 
 
 # 设置header
@@ -49,13 +49,6 @@ if __name__ == '__main__':
         logger._init()
         global_mysql._init()
 
-        # upImg = uploadImg.UploadImg()
-        # upImg.uploadImg("","","")
-
-        # add_content = xunhuan.Xunhuan(
-        #     12312, '测试', '测试用内容', 'http://ssafdafe', 901231293, 'ceshji', "adafouea")
-        # global_mysql.add_data(add_content)
-
         logIn = log_in.Login('zailid', 'hatsune3190')
         cookie = logIn.get_cookie()
 
@@ -63,30 +56,30 @@ if __name__ == '__main__':
 
         agent = userAgent.UserAgent()
         user_agent = agent.getUserAgent()
-        # print(user_agent)
 
         ipFunc = getIP.GetIP()
         ipFunc.getIPContent()
         ip = ipFunc.getRandIP()
-        # print(ip)
 
         headers = getHeaders(url, user_agent, cookie)
         sPage = allContent.AllContent(url, ip, headers)
-        # print(sPage)
+
         i = 1
         # for i in range(1, 4):
         fPage = forumPage.ForumPage(url, headers, ip, i, 1)
         pageArray = fPage.getForumPageList()
-        # print(len(pageArray))
-        # print(pageArray)
-        sPage.getAllSinglePageContent(pageArray)
+        logger.info("总数量为："+str(len(pageArray)))
+        single_list = sPage.getAllSinglePageContent(pageArray)
+
+        # 处理图片
+        pImg = content.Content()
+        pImg.processContent(single_list, headers, ip)
+        for v in single_list:
+            print(v)
 
     except Exception as result:
-        # print(result.__traceback__.tb_frame.f_globals['__file__'])
-        # print(result.__traceback__.tb_lineno)
-        # print(repr(result))
         logger.error(
             result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-        # logger.error(repr(result))
+
     finally:
         logIn.closeBrowser()

@@ -27,12 +27,10 @@ class ForumPage:
         opener = urllib.request.build_opener(proxy_support)
         urllib.request.install_opener(opener)
 
-        # print(self.url + '?' + data)
-
         try:
             request = urllib.request.Request(
                 self.url + '?' + data, headers=headers)
-            # print(request.data)
+
             response = urllib.request.urlopen(request)
 
             if response.status != 200:
@@ -40,45 +38,32 @@ class ForumPage:
 
             page = response.read()
             response.close()
-            # print(page.decode("unicode_escape"))
 
             soup = BeautifulSoup(page, 'html.parser', from_encoding='utf-8')
             contents = soup.find_all('a', attrs={'class': 's xst'})
-            # print(contents)
+
             contentArray = []
             for i in contents:
-                # print(i.attrs)
-                # print(i.text)
                 if 'href' in i.attrs:
                     tmp_jump_url = i.attrs['href']
-                    # print(tmp_jump_url)
+
                     r = re.compile('tid=(.*?)&')
                     m = r.search(tmp_jump_url)
                     tid = 0
                     if m:
                         tid = m.group(1)
-                    # print(tid)
 
                     jump_url = tmp_jump_url.replace('amp;', '')
-                    # print(jump_url)
+
                     simpleContent = content.Content()
                     contentArray.append(simpleContent.Simple(
                         title=i.text, jump_url=jump_url, tid=tid))
 
             return contentArray
-        # print(i)
-
-        # for k, v in contentDict.items():
-        # 	print(k)
-        # 	print(v)
 
         except Exception as result:
-            # print(result.__traceback__.tb_frame.f_globals['__file__'])
-            # print(result.__traceback__.tb_lineno)
-            # print(repr(result))
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-            # logger.error(repr(result))
 
     # 根据页数获得帖子列表
     def getForumPageList(self):

@@ -8,14 +8,12 @@ class DownloadImg:
         try:
             if not os.path.exists(filePath):
                 os.makedirs(filePath, mode=0o755, exist_ok=True)
-            # request = urllib.request.Request(img_url, headers=header)
+
             imageNameArray = img_url.split('/')
             if len(imageNameArray) == 0:
                 raise Exception("image name error")
             imageName = imageNameArray[len(imageNameArray) - 1]
 
-            # urllib.request.urlretrieve(img_url, filePath + imageName)
-            # print(img_url)
             proxyIP = {
                 'http': 'http://' + ip,
             }
@@ -27,16 +25,25 @@ class DownloadImg:
                 logger.error(img_url+"图片获取失败")
 
         except Exception as result:
-            # print(result.__traceback__.tb_frame.f_globals['__file__'])
-            # print(result.__traceback__.tb_lineno)
-            # print(repr(result))
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-            # logger.error(repr(result))
 
         finally:
             f.close()
 
-# with open(filePath + imageName, 'wb')as f:
-# 	f.write(response.content)
-# 	f.close()
+    def saveImg(self, img_url, filePath, image_content):
+        try:
+            if not os.path.exists(filePath):
+                os.makedirs(filePath, mode=0o755, exist_ok=True)
+            imageNameArray = img_url.split('/')
+            if len(imageNameArray) == 0:
+                raise Exception("image name error")
+            imageName = imageNameArray[len(imageNameArray) - 1]
+            with open(filePath + imageName, 'wb') as f:
+                f.write(image_content)
+        except Exception as result:
+            logger.error(
+                result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+
+        finally:
+            f.close()

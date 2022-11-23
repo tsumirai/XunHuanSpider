@@ -11,8 +11,6 @@ class SaveTxt:
             fw = open(filePath + '/' + fileName +
                       '.txt', 'w', encoding='utf-8')
             for k, v in contentData.items():
-                # print(k)
-                # print(v)
                 if isinstance(v, list):
                     imgUrl = "\n".join(v)
                     fw.write(k + ' : ' + imgUrl)

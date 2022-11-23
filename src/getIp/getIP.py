@@ -69,9 +69,6 @@ class GetIP:
                     speedStr = ipDict['响应速度'].rstrip('秒')
                     speed = float(speedStr)
 
-                # print(takeTimeStamp)
-                # print(timeStamp)
-                # print(speed)
                 if takeTimeStamp >= timeStamp and speed <= 1:
                     ipStr = ''
                     portStr = ''
@@ -93,14 +90,11 @@ class GetIP:
             return ipArray
 
         except Exception as result:
-            # print(result.__traceback__.tb_frame.f_globals['__file__'])
-            # print(result.__traceback__.tb_lineno)
-            # print(repr(result))
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-            # logger.error(repr(result))
 
     # 获得IP列表
+
     def getIPContent(self):
         fileDir = conf.get('ip_config', 'dir')
         filePath = fileDir
@@ -152,14 +146,11 @@ class GetIP:
                 fw.close()
 
         except Exception as result:
-            # print(result.__traceback__.tb_frame.f_globals['__file__'])
-            # print(result.__traceback__.tb_lineno)
-            # print(repr(result))
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-            # logger.error(repr(result))
 
     # 获得随机IP
+
     def getRandIP(self):
         filePath = conf.get('ip_config', 'dir')
         fileName = conf.get('ip_config', 'name')
@@ -179,9 +170,5 @@ class GetIP:
             return ip
 
         except Exception as result:
-            # print(result.__traceback__.tb_frame.f_globals['__file__'])
-            # print(result.__traceback__.tb_lineno)
-            # print(repr(result))
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-            # logger.error(repr(result))

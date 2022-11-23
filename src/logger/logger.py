@@ -14,8 +14,8 @@ def _init():
 
 
 def info(value):
-    logger.info('[INFO]'+value)
+    logger.info('[INFO]'+str(value))
 
 
 def error(value):
-    logger.error('[ERROR]'+value)
+    logger.error('[ERROR]'+str(value))

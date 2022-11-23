@@ -8,7 +8,7 @@ from src.logger import logger
 import re
 
 
-class SinglePage():
+class SinglePage:
     def __init__(self, url, ip, jump_url, tid, header):
         self.url = url
         self.ip = ip
@@ -21,23 +21,6 @@ class SinglePage():
 
     def _getSinglePageContent(self):
         url = self.url + '?' + self.jump_url.replace('forum.php?', '')
-        # r = re.compile('tid=(.*?)&')
-        # m = r.search(self.jump_url)
-        # tid = 0
-        # if m:
-        # 	tid = m.group(1)
-        # 	print(tid)
-
-        # cj = cookiejar.CookieJar()
-        # opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
-        # urllib.request.install_opener(opener)
-
-        # proxy_support = urllib.request.ProxyHandler({'http': self.ip})
-        # opener = urllib.request.build_opener(proxy_support)
-        # urllib.request.install_opener(opener)
-        #
-        # request = urllib.request.Request(url, headers=self.header)
-        # response = urllib.request.urlopen(request)
 
         proxyIP = {
             'http': 'http://' + self.ip,
@@ -50,9 +33,6 @@ class SinglePage():
             # if response.status != 200:
             # 	raise Exception("get ip failed", response.status)
             #
-            # page = response.read()
-            # print(page.decode("unicode_escape"))
-            # response.close()
 
             soup = BeautifulSoup(
                 response.text, 'html.parser', from_encoding='utf-8')
@@ -63,83 +43,23 @@ class SinglePage():
             pics = soup.find_all('div', class_='mbn savephotop')
             other_pics = soup.find_all('img', class_='zoom')
             contentDetail = content.Content()
-            # print(company_item)
-            # keyword = "name=\"keywords\""
+
             contentData = ''
             titleData = ''
-            # qqData = ''
-            # wxData = ''
+
             contactData = ''
             imageData = []
             for i in title:
-                # print(i)
-                # print(i.attrs)
                 titleData = i.attrs['content'].replace('凤楼信息', '')
-            # print(titleData)
 
             for i in miss_show:
                 reg = re.compile(r'QQ/微信:(.*)切记！未见面不要先给钱，见面满意后付款!')
-                # print(i.text)
+
                 m = re.search(reg, i.text)
                 if m:
                     contactData = m.group(1)
-                    # print(m.group(1))
                 else:
                     contactData = i.text
-                    # print(i.text)
-
-            # print(thread)
-            # for i in thread:
-                # print(i.text)
-                if 'QQ：' in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 0:
-                        qqData = qq[0].replace('QQ：', '')
-                elif 'QQ:' in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 0:
-                        qqData = qq[0].replace('QQ:', '')
-                elif 'QQ ' in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 1:
-                        qqData = qq[1].replace('QQ', '')
-                elif 'QQ' in i.text and 'QQ群' not in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 0:
-                        qqData = qq[0].replace('QQ', '')
-                elif 'qq：' in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 0:
-                        qqData = qq[0].replace('qq：', '')
-                elif 'qq:' in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 0:
-                        qqData = qq[0].replace('qq:', '')
-                elif 'qq ' in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 1:
-                        qqData = qq[1].replace('qq', '')
-                elif 'qq' in i.text and 'qq群' not in i.text:
-                    qq = i.text.split(' ')
-                    if len(qq) > 0:
-                        qqData = qq[0].replace('qq', '')
-                # print(qqData)
-                if '微信：' in i.text:
-                    wx = i.text.split(' ')
-                    if len(wx) > 0:
-                        wxData = wx[0].replace('微信：', '')
-                elif '微信:' in i.text:
-                    wx = i.text.split(' ')
-                    if len(wx) > 0:
-                        wxData = wx[0].replace('微信:', '')
-                elif '微信 ' in i.text:
-                    wx = i.text.split(' ')
-                    if len(wx) > 1:
-                        wxData = wx[1].replace('微信:', '')
-                elif '微信' in i.text and '微信群' not in i.text:
-                    wx = i.text.split(' ')
-                    if len(wx) > 0:
-                        wxData = wx[0].replace('微信', '')
 
             for i in contentText:
                 tempData = i.find(text=True).strip()
@@ -148,54 +68,32 @@ class SinglePage():
                 else:
                     if len(i.contents) > 1 and len(i.contents[1]) > 0:
                         contentData = i.contents[1].contents[0].text
-            # fontText = i.find_all('font')
-            # for j in fontText:
-            # 	if j.text != '':
-            # 		contentData = j.text
-            # 	else:
-            # 		font2Text = j.find_all('font')
-            # 		for k in font2Text:
-            # 			if k.text != '':
-            # 				contentData = k.text
-            # 			else:
-            # 				font3Text = k.find_all('font')
-            # 				for f in font3Text:
-            # 					if f.text != '':
-            # 						contentData = f.text
-
-            # print(contentData)
-            # print(contentData)
-            # print(content)
 
             for i in pics:
                 img = i.find_all('img')
                 for j in img:
                     image_url = self.img_url + j.attrs['file']
                     imageData.append(image_url)
-            # print(imageData)
-            # print(i)
 
             for i in other_pics:
                 image_url = self.img_url + i.attrs['file']
-                imageData.append(image_url)
+                if image_url not in imageData:
+                    imageData.append(image_url)
 
             complete = contentDetail.Complete(
                 titleData, contentData, imageData, contactData, url, self.tid)
             return complete
 
         except Exception as result:
-            # print(result.__traceback__.tb_frame.f_globals['__file__'])
-            # print(result.__traceback__.tb_lineno)
-            # print(repr(result))
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
-            # logger.error(repr(result))
 
     # 获得具体帖子内容
     def _getSinglePage(self):
         # refer = "https://www.xhg2009.com/forum.php?mod=forumdisplay&fid=2&filter=sortid&sortid=3&searchsort=1&area=1"
 
         singleData = self._getSinglePageContent()
+        return singleData
 
         # 上传图片
         upImg = uploadImg.UploadImg()
@@ -205,11 +103,6 @@ class SinglePage():
         # 下载图片
         downImg = downloadImg.DownloadImg()
 
-        # print(v['title'])
-        # print(v['content'])
-        # print(v['qq'])
-        # print(v['wx'])
-        # print(v['image_urls'])
         fileDir = conf.get('image', 'dir')
         filePath = fileDir + singleData['title'] + '/'
 
