@@ -25,3 +25,9 @@ def add_data(instance):
     _global_session.add(instance)
     _global_session.commit()
     _global_session.close()
+
+
+def add_all(instances):
+    _global_session.add_all(instances)
+    _global_session.commit()
+    _global_session.close()

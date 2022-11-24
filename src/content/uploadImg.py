@@ -6,11 +6,12 @@ import string
 from requests_toolbelt import MultipartEncoder
 import json
 import datetime
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class UploadImg:
-    def uploadImg(self, img_url, image_content, ip, tid):
+    def uploadImg(self, content, image_content, index):
         try:
             # proxyIP = {
             #     'http': 'http://' + ip,
@@ -20,10 +21,19 @@ class UploadImg:
             image_url = conf.get('image', 'host')
             token = conf.get('image', 'key')
 
+            img_url = content['image_urls'][index]
+            tid = content['tid']
             imageNameArray = img_url.split('/')
             if len(imageNameArray) == 0:
                 raise Exception("image name error")
-            image_name = imageNameArray[len(imageNameArray) - 1]
+            source_image_name = imageNameArray[len(imageNameArray) - 1]
+            reg = re.compile(r'\.(.*)')
+            m = re.search(reg, source_image_name)
+            expand_name = '.jpg'
+            if m:
+                expand_name = m.group(1)
+
+            image_name = str(tid)+'-'+str(index+1)+'.'+str(expand_name)
             fields = {"file": (image_name, image_content)}
             boundary = '----WebKitFormBoundary' \
                 + ''.join(random.sample(string.ascii_letters +

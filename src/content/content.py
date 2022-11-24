@@ -3,6 +3,10 @@ from src.logger import logger
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from src.content import uploadImg, downloadImg, saveTxt
 from src.config import conf
+from src.mysql import global_mysql
+from src.my_redis import global_redis
+from src.consts import consts
+from src.model import xunhuan
 
 
 class Content:
@@ -28,6 +32,7 @@ class Content:
         return dict
 
     def processContent(self, contentList, header, ip):
+        save_data = []
         # 设置线程池
         thread_pool = ThreadPoolExecutor(max_workers=5)
         for v in contentList:
@@ -38,28 +43,39 @@ class Content:
         thread_pool = ThreadPoolExecutor(max_workers=3)
         upImg = uploadImg.UploadImg()
         for v in contentList:
-            for img in v['image_urls']:
-                if img in self.image_content:
+            for index in range(len(v['image_urls'])):
+                if v['image_urls'][index] in self.image_content:
                     new_img_url = thread_pool.submit(
-                        upImg.uploadImg, img, self.image_content[img], ip, 0)
-                    v['new_image_urls'].append(new_img_url.result())
+                        upImg.uploadImg, v, self.image_content[v['image_urls'][index]], index)
+                    if new_img_url.result():
+                        v['new_image_urls'].append(new_img_url.result())
 
         thread_pool.shutdown(wait=True)
 
         # 下载图片
-        downImg = downloadImg.DownloadImg()
+        thread_pool = ThreadPoolExecutor(max_workers=5)
 
-        fileDir = conf.get('image', 'dir')
         for singleData in contentList:
-            filePath = fileDir + singleData['title'] + '/'
+            thread_pool.submit(self._saveContentData, singleData)
+        thread_pool.shutdown(wait=True)
+        
+        # 落库
+        max_tid_redis = global_redis.get(consts.REDIS_KEY_MAX_TID)
+        max_tid = 0
+        if max_tid_redis:
+            max_tid = int(max_tid_redis)
+        for v in contentList:
+            logger.info(str(v))
+            image_url = ';'.join(v['image_urls'])
+            new_image_url = ';'.join(v['new_image_urls'])
+            save_content = xunhuan.Xunhuan(v['tid'], v['title'], v['content'],
+                                           image_url, v['contact'], new_image_url, v['url'])
+            save_data.append(save_content)
+            if int(v['tid']) > max_tid:
+                max_tid = int(v['tid'])
+        global_mysql.add_all(save_data)
 
-            for down_img in singleData['image_urls']:
-                if down_img in self.image_content:
-                    downImg.saveImg(down_img, filePath,
-                                    self.image_content[down_img])
-
-            txt = saveTxt.SaveTxt()
-            txt.saveTxt(singleData, filePath)
+        global_redis.set(consts.REDIS_KEY_MAX_TID, max_tid)
 
     def _getImgContent(self, content, header, ip):
         try:
@@ -76,3 +92,16 @@ class Content:
         except Exception as result:
             logger.error(
                 result.__traceback__.tb_frame.f_globals['__file__']+':'+str(result.__traceback__.tb_lineno)+'|'+repr(result))
+
+    def _saveContentData(self, content):
+        downImg = downloadImg.DownloadImg()
+        fileDir = conf.get('image', 'dir')
+        filePath = fileDir + str(content['tid'])+'-'+content['title'] + '/'
+
+        for index in range(len(content['image_urls'])):
+            if content['image_urls'][index] in self.image_content:
+                downImg.saveImg(
+                    content, self.image_content[content['image_urls'][index]], index, filePath)
+
+        txt = saveTxt.SaveTxt()
+        txt.saveTxt(content, filePath)

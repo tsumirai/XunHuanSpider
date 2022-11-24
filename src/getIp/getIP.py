@@ -83,10 +83,6 @@ class GetIP:
             # if takeTimeStamp < timeStamp:
             # 	return ipArray
 
-            # print(i)
-            # print(i.attrs)
-
-            print(len(ipArray))
             return ipArray
 
         except Exception as result:
@@ -134,6 +130,8 @@ class GetIP:
                         for i in ipArray:
                             if i not in ips:
                                 ips.append(i)
+                    else:
+                        break
 
                 get_time = time.strftime(
                     '%Y-%m-%d %H:%M:%S', time.localtime(time.time()))

@@ -11,7 +11,7 @@ def _init():
 def set(key, value):
     r = redis.Redis(connection_pool=_global_pool)
     res = r.set(key, value)
-    print(res)
+    return res
 
 
 def get(key):

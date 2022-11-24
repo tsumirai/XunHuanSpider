@@ -42,6 +42,6 @@ class GetProvince:
                     provinceDict[i.text] = province.Province(
                         name=i.text, area_id=area_id, jump_url=jump_url)
 
-        # for k, v in provinceDict.items():
-        # 	print(k)
-        # 	print(v.name, v.area_id, v.jump_url)
+        for k, v in provinceDict.items():
+        	print(k)
+        	print(v.name, v.area_id, v.jump_url)

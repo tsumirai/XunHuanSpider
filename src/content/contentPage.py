@@ -27,7 +27,8 @@ class SinglePage:
         }
 
         try:
-            response = requests.get(url, headers=self.header, proxies=proxyIP)
+            response = requests.get(
+                url, headers=self.header, proxies=proxyIP)
             response.encoding = 'utf-8'
 
             # if response.status != 200:
