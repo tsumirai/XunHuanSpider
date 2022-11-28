@@ -5,18 +5,18 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from src.content import content
-from src.logger import logger
-from src.my_redis import global_redis
-from src.config import userAgent
-from src.getIp import getIP
-from src.forum import forumPage
-from src.content import allContent
-from src.logIn import log_in
-from requests.cookies import cookiejar_from_dict
-from src.config import conf
-from src.mysql import global_mysql
 from src.consts import consts
+from src.mysql import global_mysql
+from src.config import conf
+from requests.cookies import cookiejar_from_dict
+from src.logIn import log_in
+from src.content import allContent
+from src.forum import forumPage
+from src.getIp import getIP
+from src.config import userAgent
+from src.my_redis import global_redis
+from src.logger import logger
+from src.content import content
 
 
 
@@ -44,17 +44,18 @@ if __name__ == '__main__':
         logger._init()
         global_mysql._init()
 
-        logIn = log_in.Login('zailid', 'hatsune3190')
+        ipFunc = getIP.GetIP()
+        ipFunc.getIPContent()
+        ip = ipFunc.getRandIP()
+        logger.info("ip is :"+ip)
+
+        logIn = log_in.Login('zailid', 'hatsune3190', '')
         cookie = logIn.get_cookie()
 
         url = conf.get('xunhuan', 'url')
 
         agent = userAgent.UserAgent()
         user_agent = agent.getUserAgent()
-
-        ipFunc = getIP.GetIP()
-        ipFunc.getIPContent()
-        ip = ipFunc.getRandIP()
 
         headers = getHeaders(url, user_agent, cookie)
         sPage = allContent.AllContent(url, ip, headers)
@@ -101,6 +102,8 @@ if __name__ == '__main__':
                 # 处理图片
                 pImg = content.Content()
                 pImg.processContent(single_list, headers, ip)
+            else:
+                break
 
     except Exception as result:
         logger.error(

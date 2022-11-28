@@ -1,19 +1,30 @@
+from lib2to3.pgen2.token import OP
 import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from src.config import conf
 
 
 class Login:
-    def __init__(self, username, password):
+    def __init__(self, username, password, ip):
         self.username = username
         self.password = password
-        self.browser = webdriver.Chrome()  # 声明浏览器
+
+        if ip:
+            chrome_option = Options()
+            chrome_option.add_argument('--proxy-server=https://'+ip)
+
+            self.browser = webdriver.Chrome(options=chrome_option)  # 声明浏览器
+        else:
+            self.browser = webdriver.Chrome()
 
     def _log_in(self):
         self.browser.implicitly_wait(30)  # 隐性等待 在规定的时间内，最长等待s秒
-        self.browser.get(
-            'https://www.xhg141.com/forum.php?mod=forumdisplay&fid=2&sortid=3&sortid=3&filter=sortid&searchsort=1&area=1&page=1')  # 打开设置的网址
+        url = conf.get('xunhuan','url')
+        self.browser.get(url+
+            '?mod=forumdisplay&fid=2&sortid=3&sortid=3&filter=sortid&searchsort=1&area=1&page=1')  # 打开设置的网址
 
         user_login_button = self.browser.find_element(
             by=By.CLASS_NAME, value='qx_user_a')

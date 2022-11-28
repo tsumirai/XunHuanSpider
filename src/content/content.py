@@ -58,7 +58,7 @@ class Content:
         for singleData in contentList:
             thread_pool.submit(self._saveContentData, singleData)
         thread_pool.shutdown(wait=True)
-        
+
         # 落库
         max_tid_redis = global_redis.get(consts.REDIS_KEY_MAX_TID)
         max_tid = 0
@@ -70,7 +70,10 @@ class Content:
             new_image_url = ';'.join(v['new_image_urls'])
             save_content = xunhuan.Xunhuan(v['tid'], v['title'], v['content'],
                                            image_url, v['contact'], new_image_url, v['url'])
-            save_data.append(save_content)
+            content_data = global_mysql.get_session().query(
+                xunhuan.Xunhuan).filter_by(tid=v['tid']).first()
+            if not content_data:
+                save_data.append(save_content)
             if int(v['tid']) > max_tid:
                 max_tid = int(v['tid'])
         global_mysql.add_all(save_data)

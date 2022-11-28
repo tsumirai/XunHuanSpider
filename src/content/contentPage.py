@@ -95,20 +95,3 @@ class SinglePage:
 
         singleData = self._getSinglePageContent()
         return singleData
-
-        # 上传图片
-        upImg = uploadImg.UploadImg()
-        for img in singleData['image_urls']:
-            upImg.uploadImg(img, self.header, self.ip, self.tid)
-
-        # 下载图片
-        downImg = downloadImg.DownloadImg()
-
-        fileDir = conf.get('image', 'dir')
-        filePath = fileDir + singleData['title'] + '/'
-
-        for down_img in singleData['image_urls']:
-            downImg.downloadImg(down_img, filePath, self.header, self.ip)
-
-        txt = saveTxt.SaveTxt()
-        txt.saveTxt(singleData, filePath)
