@@ -40,7 +40,7 @@ class ForumPage:
             response.close()
 
             soup = BeautifulSoup(page, 'html.parser', from_encoding='utf-8')
-            contents = soup.find_all('a', attrs={'class': 's xst'})
+            contents = soup.find_all(href=re.compile('forum.php?mod=viewthread&amp;tid='))
 
             contentArray = []
             for i in contents:

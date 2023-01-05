@@ -1,23 +1,23 @@
 # coding=utf-8
-
 import os
 import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 
-from src.consts import consts
-from src.mysql import global_mysql
-from src.config import conf
-from requests.cookies import cookiejar_from_dict
-from src.logIn import log_in
-from src.content import allContent
-from src.forum import forumPage
-from src.getIp import getIP
-from src.config import userAgent
-from src.my_redis import global_redis
-from src.logger import logger
-from src.content import content
 
+
+from src.content import content
+from src.logger import logger
+from src.my_redis import global_redis
+from src.config import userAgent
+from src.getIp import getIP
+from src.forum import forumPage
+from src.content import allContent
+from src.logIn import log_in
+from requests.cookies import cookiejar_from_dict
+from src.config import conf
+from src.mysql import global_mysql
+from src.consts import consts
 
 
 # 设置header
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         logIn = log_in.Login('zailid', 'hatsune3190', '')
         cookie = logIn.get_cookie()
 
-        url = conf.get('xunhuan', 'url')
+        url = conf.get('xunhuan', 'url')+'forum.php'
 
         agent = userAgent.UserAgent()
         user_agent = agent.getUserAgent()

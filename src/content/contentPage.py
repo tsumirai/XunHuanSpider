@@ -54,7 +54,7 @@ class SinglePage:
                 titleData = i.attrs['content'].replace('凤楼信息', '')
 
             for i in miss_show:
-                reg = re.compile(r'QQ/微信:(.*)切记！未见面不要先给钱，见面满意后付款!')
+                reg = re.compile(r'QQ/微信:(.*)\n\n')
 
                 m = re.search(reg, i.text)
                 if m:

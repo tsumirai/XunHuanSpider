@@ -23,12 +23,15 @@ class Login:
     def _log_in(self):
         self.browser.implicitly_wait(30)  # 隐性等待 在规定的时间内，最长等待s秒
         url = conf.get('xunhuan','url')
-        self.browser.get(url+
-            '?mod=forumdisplay&fid=2&sortid=3&sortid=3&filter=sortid&searchsort=1&area=1&page=1')  # 打开设置的网址
+        # self.browser.get(url+'forum.php'+
+        #     '?mod=forumdisplay&fid=2&sortid=3&sortid=3&filter=sortid&searchsort=1&area=1&page=1')  # 打开设置的网址
 
-        user_login_button = self.browser.find_element(
-            by=By.CLASS_NAME, value='qx_user_a')
-        user_login_button.click()
+        self.browser.get(url+
+            'member.php?mod=logging&action=login')  # 打开设置的网址
+
+        # user_login_button = self.browser.find_element(
+        #     by=By.CLASS_NAME, value='pnavbar-nav')
+        # user_login_button.click()
 
         # 输入用户名
         username = self.browser.find_element(
