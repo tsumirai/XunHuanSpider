@@ -45,7 +45,7 @@ class SinglePage:
             miss_show = soup.find(class_='font-weight-bold',text=re.compile(r'QQ/微信：(.*)'))
             if miss_show.next_sibling:
                 contactData = miss_show.next_sibling.text.replace('未见人就要定金、押金、路费的100%是骗子，请点击举报，删帖处理','')
-            contentText = soup.find_all('td', class_='t_f')
+            contentText = soup.find('td', class_='t_f')
             pics = soup.find_all('img', class_='el-image__inner p_no_uid el-image__preview')
             other_pics = soup.find_all('img', class_='el-image__inner el-image__preview')
 
@@ -68,13 +68,14 @@ class SinglePage:
             #     else:
             #         contactData = i.text
 
-            for i in contentText:
-                tempData = i.find(text=True).strip()
-                if tempData != '':
-                    contentData = tempData
-                else:
-                    if len(i.contents) > 1 and len(i.contents[1]) > 0:
-                        contentData = i.contents[1].contents[0].text
+            contentData = contentText.text
+            # for i in contentText:
+            #     tempData = i.find(text=True).strip()
+            #     if tempData != '':
+            #         contentData = tempData
+            #     else:               
+            #         if i.contents and len(i.contents) > 1 and len(i.contents[1]) > 0 and i.contents[1].contents and len(i.contents[1].contents) > 0:
+            #             contentData = i.contents[1].contents[0].text
 
             for i in pics:
                 addImgUrl = i.attrs['src']

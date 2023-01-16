@@ -74,7 +74,7 @@ if __name__ == '__main__':
         #         "user-agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36 Edg/105.0.1343.27',
         #         "refer": refer}
         # sPage = contentPage.SinglePage('https://www.xhg072.com/forum.php',
-        #                 '172.24.221.146', 'mod=viewthread&tid=154587', '154587', headers)
+        #                 '172.24.221.146', 'mod=viewthread&tid=154887', '154887', headers)
         # sPage._getSinglePage()
 
 
