@@ -38,29 +38,35 @@ class SinglePage:
             soup = BeautifulSoup(
                 response.text, 'html.parser', from_encoding='utf-8')
             title = soup.find_all('meta', attrs={"name": 'keywords'})
-            # thread = soup.find_all('span')
-            miss_show = soup.find_all('div', class_='miss-show')
-            contentText = soup.find_all('td', class_='t_f')
-            pics = soup.find_all('div', class_='mbn savephotop')
-            other_pics = soup.find_all('img', class_='zoom')
             contentDetail = content.Content()
+            # thread = soup.find_all('span')
+            # miss_show = soup.find_all('div', class_='Profile')
+            contactData = ''
+            miss_show = soup.find(class_='font-weight-bold',text=re.compile(r'QQ/微信：(.*)'))
+            if miss_show.next_sibling:
+                contactData = miss_show.next_sibling.text.replace('未见人就要定金、押金、路费的100%是骗子，请点击举报，删帖处理','')
+            contentText = soup.find_all('td', class_='t_f')
+            pics = soup.find_all('img', class_='el-image__inner p_no_uid el-image__preview')
+            other_pics = soup.find_all('img', class_='el-image__inner el-image__preview')
 
             contentData = ''
             titleData = ''
-
-            contactData = ''
+            
             imageData = []
             for i in title:
                 titleData = i.attrs['content'].replace('凤楼信息', '')
 
-            for i in miss_show:
-                reg = re.compile(r'QQ/微信:(.*)\n\n')
+            # for i in miss_show:
+            #     contactDetail = i.find_next(class_='font-weight-bold',text=re.compile(r'QQ/微信：(.*)'))
+            #     print(contactDetail.next_sibling)
+                
+            #     reg = re.compile(r'QQ/微信：(.*)\n\n')
 
-                m = re.search(reg, i.text)
-                if m:
-                    contactData = m.group(1)
-                else:
-                    contactData = i.text
+            #     m = re.search(reg, i.text)
+            #     if m:
+            #         contactData = m.group(1)
+            #     else:
+            #         contactData = i.text
 
             for i in contentText:
                 tempData = i.find(text=True).strip()
@@ -71,13 +77,13 @@ class SinglePage:
                         contentData = i.contents[1].contents[0].text
 
             for i in pics:
-                img = i.find_all('img')
-                for j in img:
-                    image_url = self.img_url + j.attrs['file']
+                addImgUrl = i.attrs['src']
+                image_url = self.img_url + addImgUrl
+                if image_url not in imageData:
                     imageData.append(image_url)
 
             for i in other_pics:
-                image_url = self.img_url + i.attrs['file']
+                image_url = self.img_url + i.attrs['src']
                 if image_url not in imageData:
                     imageData.append(image_url)
 
@@ -95,3 +101,4 @@ class SinglePage:
 
         singleData = self._getSinglePageContent()
         return singleData
+

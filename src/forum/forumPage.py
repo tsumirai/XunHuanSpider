@@ -17,8 +17,8 @@ class ForumPage:
         self.area = area
 
     def _getForumPage(self):
-        values = {"mod": "forumdisplay", "fid": "2", "filter": "sortid", "sortid": "3", "searchsort": "1",
-                  "area": self.area, "page": self.page}
+        values = {"mod": "forumdisplay", "fid": "2", "filter": "sortid",
+                  "sortid": "3", "searchsort": "1", "area": self.area, "page": self.page}
 
         headers = self.header
         data = parse.urlencode(values)
@@ -40,18 +40,39 @@ class ForumPage:
             response.close()
 
             soup = BeautifulSoup(page, 'html.parser', from_encoding='utf-8')
-            contents = soup.find_all(href=re.compile('forum.php?mod=viewthread&amp;tid='))
-
+            # p = re.compile(r'<a.*?href=forum.php?mod=viewthread&amp;tid=[0-9]*')
+            contents = soup.find_all('a', attrs={"href":re.compile(
+                r'forum.php\?mod=viewthread&tid=[0-9]*')})
             contentArray = []
+
+            # urlContents = soup.find_all('a')
+            # 
+            # for i in urlContents:
+            #     p = re.compile(r'forum.php\?mod=viewthread&tid=[0-9]*')
+            #     print(i.attrs)
+            #     if i.attrs.get('href'):
+            #         m = p.search(i.attrs.get('href'))
+            #         if m:
+            #             tmp_jump_url = m.group(1)
+            #             jump_url = tmp_jump_url.replace('amp;', '')
+            #             tid = 0
+            #             r = re.compile('tid=(.*?)&')
+            #             m2 = r.search(tmp_jump_url)
+            #             if m2:
+            #                 tid = m2.group(1)
+            #             simpleContent = content.Content()
+            #             contentArray.append(simpleContent.Simple(
+            #                 title=i.text, jump_url=jump_url, tid=tid))
+
             for i in contents:
                 if 'href' in i.attrs:
                     tmp_jump_url = i.attrs['href']
 
-                    r = re.compile('tid=(.*?)&')
+                    r = re.compile('tid=[0-9]*')
                     m = r.search(tmp_jump_url)
                     tid = 0
                     if m:
-                        tid = m.group(1)
+                        tid = m.group().replace('tid=','')
 
                     jump_url = tmp_jump_url.replace('amp;', '')
 
